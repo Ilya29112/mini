@@ -1,23 +1,23 @@
 <?php
 
-require_once 'Characters/Character.php';
-require_once 'Characters/Warrior.php';
-require_once 'Characters/Mage.php';
-require_once 'Characters/Archer.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 use Characters\Character;
 use Characters\Warrior;
 use Characters\Mage;
 use Characters\Archer;
 
-function createCharacter(string $type, string $name, int $health): Character
+class CharacterFactory
 {
-    return match (strtolower($type)) {
-        'warrior' => new Warrior($name, $health),
-        'mage' => new Mage($name, $health),
-        'archer' => new Archer($name, $health),
-        default => throw new InvalidArgumentException("Неизвестный тип персонажа: $type")
-    };
+    public static function create(string $type, string $name, int $health): Character
+    {
+        return match (strtolower($type)) {
+            'warrior' => new Warrior($name, $health),
+            'mage' => new Mage($name, $health),
+            'archer' => new Archer($name, $health),
+            default => throw new InvalidArgumentException("Неизвестный тип персонажа: $type")
+        };
+    }
 }
 
 function main(): void
@@ -41,7 +41,7 @@ function main(): void
         $health = (int)trim(fgets(STDIN));
 
         try {
-            $character = createCharacter($type, $name, $health);
+            $character = CharacterFactory::create($type, $name, $health);
             $characters[] = $character;
             echo "Персонаж создан!\n\n";
         } catch (InvalidArgumentException $e) {
